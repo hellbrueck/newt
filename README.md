@@ -31,16 +31,13 @@ docker-compose up -d
 ```
 
 #### Method B: Using direct environment variables
-Alternatively, you can configure environment variables directly in the docker-compose file:
+Alternatively, you can configure environment variables directly in the docker-compose file by replacing the `env_file` section with an `environment` section:
 
-```bash
-# Copy the example file
-cp docker-compose.env-example.yml docker-compose.yml
-# Edit docker-compose.yml with your configuration
-nano docker-compose.yml
-
-# Start the service
-docker-compose up -d
+```yaml
+environment:
+  - PANGOLIN_ENDPOINT=https://pangolin.th-luebeck.me
+  - NEWT_ID=your_newt_client_id
+  - NEWT_SECRET=your_newt_client_secret
 ```
 
 **Note**: The .env file approach is recommended for security as it keeps sensitive credentials separate from version control.
