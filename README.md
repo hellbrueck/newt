@@ -119,40 +119,29 @@ When running newt in different environments, you may encounter issues with host 
 
 ### Solution
 
-The `docker-compose.yml` file includes `extra_hosts` configuration:
-
-```yaml
-extra_hosts:
-  - "localhost:host-gateway"
-  - "host.docker.internal:host-gateway"
-```
-
-This ensures that both `localhost` and `host.docker.internal` resolve to the host machine inside the Docker container.
 
 **Note**: On macOS with Docker Desktop, `host.docker.internal` is automatically available, but we include it explicitly for compatibility.
 
-### Target Configuration Strategy
+#### Target Configuration Strategy
 
 For maximum compatibility, configure your targets using:
 
-1. **For services running on the same machine as newt:**
-   - Use `localhost` (works in both Docker and binary)
-   - Docker: Resolves to host via `extra_hosts`
-   - Binary: Resolves to local machine
-
-2. **For services running in Docker containers:**
-   - Use `host.docker.internal` (Docker only)
+1. **For services running on the same machine as newt if newt is started in docker:**
+   - Use `host.docker.internal` instead of localhost (Docker only)
    - Use container names if in same Docker network
 
-3. **For external services:**
+1. **For services running on the same machine as newt if newt is started NOT in docker:**
+   - Use `localhost` (works for services running in both Docker and binary)
+
+2. **For external services:**
    - Use full hostnames or IP addresses
 
 ### Example Target Configurations
 
 ```bash
-# Local services (same machine)
-localhost:8080          # Works in both Docker and binary
-localhost:699           # Works in both Docker and binary
+# Local services (when running newt NOT in Docker)
+localhost:8080          # works for services running in both Docker and binary
+localhost:699           # works for services running in both Docker and binary
 
 # Docker services (when running newt in Docker)
 host.docker.internal:8089  # Docker only
@@ -165,30 +154,23 @@ nasy:5000                  # External hostname
 
 ### Testing Host Access
 
-#### From Docker Container:
+#### From newt Docker Container:
 ```bash
-# Test localhost access
-docker exec newt ping localhost
-
 # Test host.docker.internal access
 docker exec newt ping host.docker.internal
 ```
 
-#### From Binary:
+#### From newt Binary:
 ```bash
 # Test localhost access
 ping localhost
 
-# Test if host.docker.internal exists (should fail)
-ping host.docker.internal
-```
 
 ### Troubleshooting
 
 #### If localhost doesn't work in Docker:
-1. Check that `extra_hosts` is configured in docker-compose.yml
-2. Restart the container: `docker-compose restart`
-3. Verify with: `docker exec newt cat /etc/hosts`
+- This is expected behavior - `host.docker.internal` is Docker-specific
+- Use `host.docker.internal` instead for local services
 
 #### If host.docker.internal doesn't work in binary:
 - This is expected behavior - `host.docker.internal` is Docker-specific

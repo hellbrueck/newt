@@ -21,11 +21,6 @@ services:
     env_file:
       - .env
     
-    # Host resolution configuration for Docker networking
-    # This allows both localhost and host.docker.internal to resolve to the host machine
-    extra_hosts:
-      - "localhost:host-gateway"           # Makes localhost resolve to host machine
-      - "host.docker.internal:host-gateway" # Ensures host.docker.internal works (macOS compatibility)
     
     # System configuration for WireGuard compatibility
     sysctls:
