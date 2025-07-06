@@ -1,6 +1,102 @@
 # newt
 some helper tools for newt
 
+## About Newt
+
+Newt is a tunneling client for Pangolin, developed by the [Fossorial Research Lab](https://github.com/fosrl). This repository contains configuration files and helper tools for deploying and managing Newt services.
+
+### Official Repository
+
+- **GitHub**: [fosrl/newt](https://github.com/fosrl/newt)
+- **Description**: A tunneling client for Pangolin
+- **Documentation**: [https://docs.fossorial.io](https://docs.fossorial.io)
+- **Language**: Go
+- **Latest Version**: 1.2.1
+
+## Installation Options
+
+### Option 1: Docker (Recommended)
+
+Use the provided `docker-compose.yml` file for easy deployment:
+
+```bash
+# Set up environment variables
+cp env.template .env
+# Edit .env with your configuration
+nano .env
+
+# Start the service
+docker-compose up -d
+```
+
+### Option 2: Binary Installation
+
+You can also install Newt as a standalone binary:
+
+#### Option A: Homebrew (Recommended for macOS)
+
+```bash
+brew install newt
+```
+
+#### Option B: Manual Download
+
+Visit the [official releases page](https://github.com/fosrl/newt/releases) or download directly:
+
+**Linux (x86_64):**
+```bash
+wget https://github.com/fosrl/newt/releases/download/1.2.1/newt_linux_amd64
+chmod +x newt_linux_amd64
+sudo mv newt_linux_amd64 /usr/local/bin/newt
+```
+
+**macOS (Intel):**
+```bash
+curl -L -o newt https://github.com/fosrl/newt/releases/download/1.2.1/newt_darwin_amd64
+chmod +x newt
+sudo mv newt /usr/local/bin/
+```
+
+**macOS (Apple Silicon):**
+```bash
+curl -L -o newt https://github.com/fosrl/newt/releases/download/1.2.1/newt_darwin_arm64
+chmod +x newt
+sudo mv newt /usr/local/bin/
+```
+
+**Windows:**
+Download `newt_windows_amd64.exe` from the releases page and rename to `newt.exe`.
+
+#### Using Command-Line Parameters
+
+The binary version requires command-line parameters (newt does not read environment variables):
+
+**Option A: Use the provided script (Recommended)**
+```bash
+# Make the script executable (first time only)
+chmod +x run_newt.sh
+
+# Run newt using values from .env file
+./run_newt.sh
+```
+
+**Option B: Use command-line parameters directly**
+```bash
+# Use command-line parameters directly
+newt --id hhxsygdft51p7gnu7 \
+     --secret v9gsw5fbatv091p2iy14bmvbj75bx1f05w3gyht7xac5awy3rl \
+     --endpoint https://pangolin.th-luebeck.me \
+     --log-level DEBUG
+```
+
+**Option C: Source .env and use variables**
+```bash
+# Source the .env file and use variables as parameters
+source .env && newt --id "$NEWT_ID" --secret "$NEWT_SECRET" --endpoint "$PANGOLIN_ENDPOINT" --log-level DEBUG
+```
+
+**Note**: The `.env` file is used by the Docker version and can be used with the binary version via the script or manual sourcing.
+
 ## Part of Tunnel Meta Repository
 
 This repository is included as a submodule in the [tunnel](https://github.com/hellbrueck/tunnel.git) meta repository, which is part of the larger [NetSysLab](https://github.com/hellbruh/NetSysLab) network infrastructure toolkit.
