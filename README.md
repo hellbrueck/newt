@@ -19,6 +19,7 @@ Newt is a tunneling client for Pangolin, developed by the [Fossorial Research La
 
 Use the provided `docker-compose.yml` file for easy deployment:
 
+#### Method A: Using .env file (Recommended)
 ```bash
 # Set up environment variables
 cp env.template .env
@@ -28,6 +29,21 @@ nano .env
 # Start the service
 docker-compose up -d
 ```
+
+#### Method B: Using direct environment variables
+Alternatively, you can configure environment variables directly in the docker-compose file:
+
+```bash
+# Copy the example file
+cp docker-compose.env-example.yml docker-compose.yml
+# Edit docker-compose.yml with your configuration
+nano docker-compose.yml
+
+# Start the service
+docker-compose up -d
+```
+
+**Note**: The .env file approach is recommended for security as it keeps sensitive credentials separate from version control.
 
 ### Option 2: Binary Installation
 
