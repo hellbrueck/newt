@@ -1,12 +1,26 @@
 services:
+  # Newt tunneling client service
   newt:
+    # Official newt Docker image from fosrl
     image: fosrl/newt
     container_name: newt
     restart: unless-stopped
+    
+    # Required capabilities for WireGuard tunnel and network operations
     cap_add:
-      - NET_ADMIN
-      - SYS_MODULE
+      - NET_ADMIN      # Required for network interface management
+      - SYS_MODULE     # Required for WireGuard kernel module operations
+    
+    # Load environment variables from .env file
     env_file:
       - .env
+    
+    # Host resolution configuration for Docker networking
+    # This allows both localhost and host.docker.internal to resolve to the host machine
+    extra_hosts:
+      - "localhost:host-gateway"           # Makes localhost resolve to host machine
+      - "host.docker.internal:host-gateway" # Ensures host.docker.internal works (macOS compatibility)
+    
+    # System configuration for WireGuard compatibility
     sysctls:
-      - net.ipv4.conf.all.src_valid_mark=1
+      - net.ipv4.conf.all.src_valid_mark=1  # Required for WireGuard routing

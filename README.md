@@ -97,6 +97,95 @@ source .env && newt --id "$NEWT_ID" --secret "$NEWT_SECRET" --endpoint "$PANGOLI
 
 **Note**: The `.env` file is used by the Docker version and can be used with the binary version via the script or manual sourcing.
 
+## Host Access Configuration
+
+When running newt in different environments, you may encounter issues with host access:
+
+- **Docker version**: `localhost` refers to the container itself, not the host machine
+- **Binary version**: `host.docker.internal` doesn't exist (Docker-specific hostname)
+
+### Solution
+
+The `docker-compose.yml` file includes `extra_hosts` configuration:
+
+```yaml
+extra_hosts:
+  - "localhost:host-gateway"
+  - "host.docker.internal:host-gateway"
+```
+
+This ensures that both `localhost` and `host.docker.internal` resolve to the host machine inside the Docker container.
+
+**Note**: On macOS with Docker Desktop, `host.docker.internal` is automatically available, but we include it explicitly for compatibility.
+
+### Target Configuration Strategy
+
+For maximum compatibility, configure your targets using:
+
+1. **For services running on the same machine as newt:**
+   - Use `localhost` (works in both Docker and binary)
+   - Docker: Resolves to host via `extra_hosts`
+   - Binary: Resolves to local machine
+
+2. **For services running in Docker containers:**
+   - Use `host.docker.internal` (Docker only)
+   - Use container names if in same Docker network
+
+3. **For external services:**
+   - Use full hostnames or IP addresses
+
+### Example Target Configurations
+
+```bash
+# Local services (same machine)
+localhost:8080          # Works in both Docker and binary
+localhost:699           # Works in both Docker and binary
+
+# Docker services (when running newt in Docker)
+host.docker.internal:8089  # Docker only
+container-name:5000        # If in same Docker network
+
+# External services
+sim01.th-luebeck.de:80     # External hostname
+nasy:5000                  # External hostname
+```
+
+### Testing Host Access
+
+#### From Docker Container:
+```bash
+# Test localhost access
+docker exec newt ping localhost
+
+# Test host.docker.internal access
+docker exec newt ping host.docker.internal
+```
+
+#### From Binary:
+```bash
+# Test localhost access
+ping localhost
+
+# Test if host.docker.internal exists (should fail)
+ping host.docker.internal
+```
+
+### Troubleshooting
+
+#### If localhost doesn't work in Docker:
+1. Check that `extra_hosts` is configured in docker-compose.yml
+2. Restart the container: `docker-compose restart`
+3. Verify with: `docker exec newt cat /etc/hosts`
+
+#### If host.docker.internal doesn't work in binary:
+- This is expected behavior - `host.docker.internal` is Docker-specific
+- Use `localhost` instead for local services
+
+#### For mixed environments:
+- Use `localhost` for services on the same machine
+- Use full hostnames for external services
+- Avoid `host.docker.internal` in binary environments
+
 ## Part of Tunnel Meta Repository
 
 This repository is included as a submodule in the [tunnel](https://github.com/hellbrueck/tunnel.git) meta repository, which is part of the larger [NetSysLab](https://github.com/hellbruh/NetSysLab) network infrastructure toolkit.
